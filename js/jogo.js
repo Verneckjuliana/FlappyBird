@@ -39,30 +39,43 @@ const planoDeFundo = {
 };
 
 //chao
-const chao = {
-    spriteX: 0,
-    spriteY: 610,
-    largura: 224,
-    altura: 112,
-    x: 0,
-    y: canvas.height - 112,
-    desenha() {
-        contexto.drawImage(
-            sprites, //img
-            chao.spriteX, chao.spriteY, //sprite X, sprit Y
-            chao.largura, chao.altura, //tamanho do recorte da sprite
-            chao.x, chao.y, //onde qr na img dentro do canvas
-            chao.largura, chao.altura, //tamanho da sprite dentro do canvas
-        );
-        contexto.drawImage(
-            sprites, //img
-            chao.spriteX, chao.spriteY, //sprite X, sprit Y
-            chao.largura, chao.altura, //tamanho do recorte da sprite
-            (chao.x + chao.largura), chao.y, //onde qr na img dentro do canvas
-            chao.largura, chao.altura, //tamanho da sprite dentro do canvas
-        );
-    },
-};
+function criaChao() { 
+    const chao = {
+        spriteX: 0,
+        spriteY: 610,
+        largura: 224,
+        altura: 112,
+        x: 0,
+        y: canvas.height - 112,
+        atualiza() {
+            const movimentoDoChao = 1;
+            const repeteEm = chao.largura / 2;
+            const movimentacao = chao.x - movimentoDoChao;
+
+            console.log('[chao.x]', chao.x);
+            console.log('[repeteEm]', repeteEm);
+            console.log('[movimentacao]', movimentacao % repeteEm);
+
+            chao.x = chao.x - movimentoDoChao;
+        },
+        desenha() {
+            contexto.drawImage(
+                sprites, //img
+                chao.spriteX, chao.spriteY, //sprite X, sprit Y
+                chao.largura, chao.altura, //tamanho do recorte da sprite
+                chao.x, chao.y, //onde qr na img dentro do canvas
+                chao.largura, chao.altura, //tamanho da sprite dentro do canvas
+            );
+            contexto.drawImage(
+                sprites, //img
+                chao.spriteX, chao.spriteY, //sprite X, sprit Y
+                chao.largura, chao.altura, //tamanho do recorte da sprite
+                (chao.x + chao.largura), chao.y, //onde qr na img dentro do canvas
+                chao.largura, chao.altura, //tamanho da sprite dentro do canvas
+            );
+        },
+    };
+}
 
 function fazColisao(flappyBird, chao) {
     const flappyBirdY = flappyBird.y + flappyBird.altura;
@@ -105,10 +118,21 @@ function criaFlappyBird() {
             flappyBird.velocidade = flappyBird.velocidade + flappyBird.gravidade;
             flappyBird.y = flappyBird.y + flappyBird.velocidade;
         },
+        movimentos: [
+            { spriteX: 0, spriteY: 0, }, //asa p cima
+            { spriteX: 0, spriteY: 26, }, //asa no meio
+            { spriteX: 0, spriteY: 52, }, //asa p baixo
+        ],
+        frameAtual: 0,
+        atualizaOFrameAtual() {
+            
+        },
         desenha() {
+            const {spriteX, spriteY} = flappyBird.movimentos[flappyBird.frameAtual];
+
             contexto.drawImage(
                 sprites, //img
-                flappyBird.spriteX, flappyBird.spriteY, //sprite X, sprit Y
+                spriteX, spriteY, //sprite X, sprit Y
                 flappyBird.largura, flappyBird.altura, //tamanho do recorte da sprite
                 flappyBird.x, flappyBird.y, //onde qr na img dentro do canvas
                 flappyBird.largura, flappyBird.altura, //tamanho da sprite dentro do canvas
@@ -144,7 +168,7 @@ function mudaParaTela(novaTela) {
     telaAtiva = novaTela;
 
     if(telaAtiva.inicializa){
-        inicializa();
+        telaAtiva.inicializa();
     }
 }
 
@@ -152,6 +176,7 @@ const Telas = {
     INICIO: {
         inicializa() {
             globais.flappyBird = criaFlappyBird();
+            globais.chao = criaChao();
         },
         desenha(){
             planoDeFundo.desenha();
@@ -163,7 +188,7 @@ const Telas = {
             mudaParaTela(Telas.JOGO);
         },
         atualiza(){
- 
+            globais.chao.atualiza();
         }
     }
 };
