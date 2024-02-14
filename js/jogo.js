@@ -125,7 +125,7 @@ function criaFlappyBird() {
         ],
         frameAtual: 0,
         atualizaOFrameAtual() {
-            
+
         },
         desenha() {
             const {spriteX, spriteY} = flappyBird.movimentos[flappyBird.frameAtual];
